@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Products</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      /* Soft gradient background */
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      padding: 40px 20px 60px;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    h2 {
+      font-size: 2.8rem;
+      margin-bottom: 30px;
+      font-weight: 700;
+      text-shadow: 1px 1px 6px rgba(0,0,0,0.4);
+      animation: fadeInDown 0.8s ease-out;
+      letter-spacing: 1.2px;
+    }
+
+    .carousel {
+      display: flex;
+      overflow-x: auto;
+      gap: 20px;
+      padding-bottom: 20px;
+      scrollbar-width: none;
+      width: 100%;
+      max-width: 1200px;
+    }
+
+    .carousel::-webkit-scrollbar {
+      display: none;
+    }
+
+    .card {
+      flex: 0 0 auto;
+      width: 280px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.25);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      animation: slideUp 0.8s ease forwards;
+      color: #333;
+    }
+
+    .card:hover {
+      transform: translateY(-10px) scale(1.05);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+      cursor: pointer;
+    }
+
+    .card img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-bottom: 4px solid #764ba2;
+      transition: transform 0.4s ease;
+    }
+
+    .card:hover img {
+      transform: scale(1.05);
+    }
+
+    .card-content {
+      padding: 18px 20px 25px;
+    }
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #2a2a2a;
+      margin-bottom: 10px;
+    }
+
+    .price {
+      font-size: 1.1rem;
+      color: #d84315; /* rich orange */
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .old-price {
+      font-size: 0.9rem;
+      text-decoration: line-through;
+      color: #999;
+      margin-left: 10px;
+      font-weight: 400;
+    }
+
+    .rating {
+      font-size: 14px;
+      color: #ffb400;
+      letter-spacing: 1px;
+    }
+
+    button {
+      padding: 14px 36px;
+      font-size: 18px;
+      background-color: #764ba2;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      animation: fadeInUp 0.8s ease;
+      box-shadow: 0 6px 15px rgba(118, 75, 162, 0.6);
+      font-weight: 600;
+      align-self: center;
+      margin-top: 30px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+    }
+
+    button:hover {
+      background-color: #5a357d;
+      box-shadow: 0 10px 25px rgba(90, 53, 125, 0.8);
+    }
+
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(40px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div style="position: absolute; top: 20px; right: 20px;">
+    {% if not session.get('admin_logged_in') %}
+      <a href="{{ url_for('signup_page') }}" style="text-decoration: none;">
+        <button style="padding: 10px 20px; background-color: white; color: #764ba2;">Login / Signup</button>
+      </a>
+    {% else %}
+      <form method="POST" action="{{ url_for('logout') }}">
+        <button type="submit" style="padding: 10px 20px; background-color: white; color: #764ba2;">Logout</button>
+      </form>
+    {% endif %}
+  </div>
+
+  <h2>Products</h2>
+
+  <div class="carousel">
+    {% for product in products %}
+    <div class="card">
+      <img src="{{ url_for('static', filename=product.image.split('static/')[-1]) }}" alt="{{ product.name }}">
+      <div class="card-content">
+        <div class="title">{{ product.name }}</div>
+        <div class="price">₹{{ product.discounted_price }}<span class="old-price"> ₹{{ product.original_price }}</span></div>
+        <div class="rating">★★★★☆</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <br><br>
+  <a href="{% if session.get('admin_logged_in') %}{{ url_for('admin') }}{% else %}{{ url_for('signup_page') }}{% endif %}">
+    <button>Add Product</button>
+  </a>
+
+
+</body>
+</html>

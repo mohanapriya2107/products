@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Admin Login / Signup</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .container {
+      background: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      width: 350px;
+      text-align: center;
+      animation: fadeIn 0.8s ease;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    input[type="email"],
+    input[type="password"],
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background-color: #5a67d8;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #434190;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 id="form-title">Check Email</h2>
+    
+    <form id="email-check-form" method="POST" action="{{ url_for('check_admin_email') }}">
+      <input type="email" name="email" placeholder="Enter your email" required>
+      <button type="submit">Continue</button>
+    </form>
+
+    <!-- Login form -->
+    <form id="login-form" class="hidden" method="POST" action="{{ url_for('admin_login') }}">
+      <input type="hidden" name="email" value="{{ email }}">
+      <input type="password" name="password" placeholder="Enter password" required>
+      <button type="submit">Login</button>
+    </form>
+
+    <!-- Signup form -->
+    <form id="signup-form" class="hidden" method="POST" action="{{ url_for('admin_signup') }}">
+      <input type="hidden" name="email" value="{{ email }}">
+      <input type="text" name="admin_name" placeholder="Your name" required>
+      <input type="password" name="password" placeholder="Create password" required>
+      <button type="submit">Sign Up</button>
+    </form>
+  </div>
+
+  <script>
+    {% if mode == "login" %}
+      document.getElementById("form-title").innerText = "Admin Login";
+      document.getElementById("email-check-form").classList.add("hidden");
+      document.getElementById("login-form").classList.remove("hidden");
+    {% elif mode == "signup" %}
+      document.getElementById("form-title").innerText = "Admin Signup";
+      document.getElementById("email-check-form").classList.add("hidden");
+      document.getElementById("signup-form").classList.remove("hidden");
+    {% endif %}
+  </script>
+</body>
+</html>
