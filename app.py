@@ -2,46 +2,57 @@ from flask import Flask, render_template, request, redirect, url_for, flash, ses
 import os
 import psycopg2
 from werkzeug.utils import secure_filename
-from dotenv import load_dotenv
-
-load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = os.getenv("SECRET_KEY", "your_secret_key")
+app.secret_key = 'your_secret_key'  # Required for session handling
 app.config['UPLOAD_FOLDER'] = os.path.join('static', 'uploaded_images')
 
+# Ensure upload folder exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
 
-# PostgreSQL connection using DATABASE_URL
 def get_db_connection():
     return psycopg2.connect(os.getenv("DATABASE_URL"), sslmode='require')
 
-# Static product list
-products = [
-    {
-        'name': 'Aflat Cap',
-        'original_price': '899.00',
-        'discounted_price': '449.00',
-        'image': 'aflat_cap.png'
-    },
-    {
-        'name': 'Derby Cap',
-        'original_price': '899.00',
-        'discounted_price': '299.00',
-        'image': 'derby.png'
-    },
-    {
-        'name': 'Fedora',
-        'original_price': '899.00',
-        'discounted_price': '349.00',
-        'image': 'fedora.png'
-    }
-]
-
 @app.route('/')
+def home():
+    return render_template('home.html')
+
+@app.route('/index')
 def index():
-    return render_template('index.html', products=products)
+    category = request.args.get('category')
+    price_min = request.args.get('price_min')
+    price_max = request.args.get('price_max')
+    rating = request.args.get('rating')
+
+    query = "SELECT name, original_price, discounted_price, image, category, rating FROM products WHERE 1=1"
+    params = []
+
+    if price_min and price_min.isdigit():
+        query += " AND discounted_price >= %s"
+        params.append(int(price_min))
+
+    if price_max and price_max.isdigit():
+        query += " AND discounted_price <= %s"
+        params.append(int(price_max))
+
+    if category:
+        query += " AND category = %s"
+        params.append(category)
+
+    if rating and rating.isdigit():
+        query += " AND rating >= %s"
+        params.append(int(rating))
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute(query, tuple(params))
+    products = cur.fetchall()
+    cur.close()
+    conn.close()
+
+    return render_template('products.html', products=products)
+
 
 @app.route('/admin')
 def admin():
@@ -57,6 +68,8 @@ def upload_product():
     name = request.form['name_of_product']
     original_price = request.form['price_of_product_without_discount']
     discounted_price = request.form['price_of_product_with_discount']
+    category = request.form['category']
+    rating = request.form['rating']
     image_file = request.files['fileupload']
 
     if image_file:
@@ -64,12 +77,13 @@ def upload_product():
         image_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         image_file.save(image_path)
 
-        products.append({
-            'name': name,
-            'original_price': original_price,
-            'discounted_price': discounted_price,
-            'image': f'uploaded_images/{filename}'
-        })
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("INSERT INTO products (name, original_price, discounted_price, image, category, rating) VALUES (%s, %s, %s, %s, %s, %s)",
+                    (name, original_price, discounted_price, f'uploaded_images/{filename}', category, rating))
+        conn.commit()
+        cur.close()
+        conn.close()
 
     return redirect(url_for('index'))
 
@@ -134,11 +148,11 @@ def admin_signup():
         cur.close()
         conn.close()
 
-@app.route('/logout', methods=['POST'])
+@app.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.pop('admin_logged_in', None)
     flash("Logged out successfully", "info")
-    return redirect(url_for('index'))
+    return redirect(url_for('home'))
 
 if __name__ == '__main__':
     app.run(debug=True)
