@@ -1,113 +1,61 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Admin - Add Product</title>
+  <meta charset="UTF-8">
+  <title>Admin - Upload Product</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
   <style>
     body {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        padding: 60px 20px;
-        min-height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #fff;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
     }
-
     form {
-        background-color: rgba(255, 255, 255, 0.95);
-        padding: 40px 50px;
-        max-width: 520px;
-        width: 100%;
-        border-radius: 20px;
-        box-shadow: 0 15px 40px rgba(0,0,0,0.3);
-        animation: fadeIn 1s ease;
-        color: #333;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      width: 400px;
     }
-
     h2 {
-        text-align: center;
-        margin-bottom: 30px;
-        font-weight: 700;
-        font-size: 2.4rem;
-        color: #5a357d;
-        letter-spacing: 1.2px;
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
     }
-
-    p {
-        margin: 12px 0 6px;
-        font-weight: 700;
-        font-size: 1rem;
-        color: #4a4a4a;
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 14px;
     }
-
-    input[type="text"],
-    input[type="number"],
-    input[type="file"] {
-        width: 100%;
-        padding: 12px 15px;
-        margin-bottom: 20px;
-        border: 1.8px solid #764ba2;
-        border-radius: 12px;
-        font-size: 16px;
-        transition: border-color 0.3s ease;
-        font-weight: 500;
-        color: #333;
-    }
-
-    input[type="text"]:focus,
-    input[type="number"]:focus,
-    input[type="file"]:focus {
-        border-color: #5a357d;
-        outline: none;
-        box-shadow: 0 0 8px rgba(118, 75, 162, 0.7);
-    }
-
     input[type="submit"] {
-        background-color: #764ba2;
-        color: white;
-        padding: 16px;
-        font-size: 18px;
-        border: none;
-        border-radius: 14px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, box-shadow 0.3s ease;
-        font-weight: 700;
-        letter-spacing: 1px;
-        text-transform: uppercase;
-        box-shadow: 0 6px 18px rgba(118, 75, 162, 0.7);
+      background-color: #5a67d8;
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
     }
-
     input[type="submit"]:hover {
-        background-color: #5a357d;
-        box-shadow: 0 10px 30px rgba(90, 53, 125, 0.9);
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(-30px); }
-        to { opacity: 1; transform: translateY(0); }
+      background-color: #434190;
     }
   </style>
 </head>
 <body>
-
   <form action="{{ url_for('upload_product') }}" method="POST" enctype="multipart/form-data">
-    <h2 style="text-align: center;">Add a New Product</h2>
-    <p>Product Name:</p>
-    <input type="text" name="name_of_product" placeholder="Enter the name of Product" required>
-
-    <p>Original Price:</p>
-    <input type="number" name="price_of_product_without_discount" placeholder="Price without any discount" step="0.01" min="0" required>
-
-    <p>Discounted Price:</p>
-    <input type="number" name="price_of_product_with_discount" placeholder="Price with discount" step="0.01" min="0" required>
-
-    <p>Upload Product Image:</p>
-    <input type="file" name="fileupload" accept="image/*" required>
-
-    <input type="submit" value="Submit Product">
+    <h2>Upload Product</h2>
+    <input type="text" name="name_of_product" placeholder="Product Name" required>
+    <input type="number" name="price_of_product_without_discount" placeholder="Original Price" step="0.01" required>
+    <input type="number" name="price_of_product_with_discount" placeholder="Discounted Price" step="0.01" required>
+    <input type="text" name="category" placeholder="Category (e.g. Laptop, Bluetooth)" required>
+    <input type="number" name="rating" placeholder="Rating (1-5)" step="0.1" min="1" max="5" required>
+    <input type="file" name="fileupload" required>
+    <input type="submit" value="Upload Product">
   </form>
-
 </body>
 </html>
