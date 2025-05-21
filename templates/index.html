@@ -162,22 +162,22 @@
   <h2>Products</h2>
 
   <div class="carousel">
-    {% for product in products %}
-    <div class="card">
-      <img src="{{ url_for('static', filename=product.image.split('static/')[-1]) }}" alt="{{ product.name }}">
-      <div class="card-content">
-        <div class="title">{{ product.name }}</div>
-        <div class="price">₹{{ product.discounted_price }}<span class="old-price"> ₹{{ product.original_price }}</span></div>
-        <div class="rating">★★★★☆</div>
-      </div>
+  {% for product in products %}
+  <div class="card">
+    <img src="{{ url_for('static', filename=product[3].split('static/')[-1]) }}" alt="{{ product[0] }}">
+    <div class="card-content">
+      <div class="title">{{ product[0] }}</div>
+      <div class="price">₹{{ product[2] }}<span class="old-price"> ₹{{ product[1] }}</span></div>
+      <div class="rating">★★★★☆</div>
     </div>
-    {% endfor %}
   </div>
+  {% endfor %}
+</div>
 
-  <br><br>
-  <a href="{% if session.get('admin_logged_in') %}{{ url_for('admin') }}{% else %}{{ url_for('signup_page') }}{% endif %}">
-    <button>Add Product</button>
-  </a>
+<br><br>
+<a href="{% if session.get('admin_logged_in') %}{{ url_for('admin') }}{% else %}{{ url_for('signup_page') }}{% endif %}">
+  <button>Add Product</button>
+</a>
 
 
 </body>
